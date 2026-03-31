@@ -48,13 +48,24 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="MPS Auth", version="1.0.0", lifespan=lifespan)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+_cors_origins = os.environ.get("CORS_ORIGINS", "*").split(",")
+# When wildcard is set, reflect the request origin so credentialed requests work
+if _cors_origins == ["*"]:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex=r".*",
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 API_PREFIX = os.environ.get("API_PREFIX", "/auth/api")
 logger.info(f"API prefix: {API_PREFIX}")
