@@ -1,0 +1,141 @@
+{
+  "project_name": "MPS Auth - School IT Admin Portal",
+  "theme_and_archetype": {
+    "theme": "LIGHT",
+    "archetype": "4 (Swiss & High-Contrast)",
+    "reasoning": "This is a centralized IT authentication and user management portal for school administrators. It must project authority, security, and absolute clarity. The design relies on high-contrast monochromes, crisp grid structures, and signal colors for functionality, eliminating unnecessary decorative elements to focus on dense data correlation and operational speed."
+  },
+  "typography": {
+    "strategy": "The 'Corporate/Enterprise' pairing. Authoritative geometric sans for headings, highly legible grotesque sans for body, and strict monospaced fonts for technical data.",
+    "fonts": {
+      "headings": {
+        "family": "Chivo",
+        "weights": ["400", "700", "900"],
+        "usage": "Use for Page Titles, Modal Headers, and primary metrics."
+      },
+      "body": {
+        "family": "IBM Plex Sans",
+        "weights": ["400", "500", "600"],
+        "usage": "Use for all standard UI text, form labels, and general reading."
+      },
+      "data": {
+        "family": "IBM Plex Mono",
+        "weights": ["400", "500"],
+        "usage": "CRITICAL: Use for all tabular data, Audit Log entries, JWT references, user IDs, dates, and metric numbers."
+      }
+    },
+    "scale": {
+      "h1": "text-4xl tracking-tight font-bold",
+      "h2": "text-2xl tracking-tight font-semibold",
+      "h3": "text-xl tracking-tight font-medium",
+      "h4": "text-lg font-medium",
+      "body": "text-sm md:text-base leading-relaxed",
+      "labels": "text-xs tracking-[0.05em] uppercase font-semibold text-muted-foreground",
+      "data": "text-sm font-mono tracking-tight"
+    }
+  },
+  "colors": {
+    "philosophy": "Color is function only. 95% of the UI should be pure monochrome. Signal Blue indicates primary action; Signal Red indicates destructive action or critical logs. The 'Tinted Grey' rule applies: greys must have a slight cool (blue) tint to feel professional, not dead.",
+    "palette": {
+      "background": "#FFFFFF",
+      "surface": "#FAFAFA",
+      "primary": "#0047FF",
+      "primary_hover": "#0036CC",
+      "destructive": "#FF2A2A",
+      "destructive_hover": "#CC0000",
+      "text_main": "#0B0C10",
+      "text_muted": "#64748B",
+      "border": "#E2E8F0"
+    },
+    "tailwind_vars": {
+      "background": "0 0% 100%",
+      "foreground": "222 18% 5%",
+      "card": "0 0% 100%",
+      "card-foreground": "222 18% 5%",
+      "popover": "0 0% 100%",
+      "popover-foreground": "222 18% 5%",
+      "primary": "223 100% 50%",
+      "primary-foreground": "0 0% 100%",
+      "secondary": "210 40% 96.1%",
+      "secondary-foreground": "222.2 47.4% 11.2%",
+      "muted": "210 40% 96.1%",
+      "muted-foreground": "215.4 16.3% 46.9%",
+      "accent": "210 40% 96.1%",
+      "accent-foreground": "222.2 47.4% 11.2%",
+      "destructive": "0 100% 58%",
+      "destructive-foreground": "0 0% 100%",
+      "border": "214.3 31.8% 91.4%",
+      "input": "214.3 31.8% 91.4%",
+      "ring": "223 100% 50%",
+      "radius": "0.25rem"
+    }
+  },
+  "spacing_and_layout": {
+    "philosophy": "The 'Control Room' Grid (Mode B). Dense, Data Correlation, Scanability. Every pixel is utilized. No jagged bottoms on grid layouts.",
+    "grid_strategy": {
+      "base": "grid-cols-1 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12",
+      "gaps": "gap-4 md:gap-6",
+      "dashboard_widgets": "col-span-full md:col-span-3 lg:col-span-4"
+    },
+    "alignment": {
+      "tables": "Left-align all text, right-align numbers and actions.",
+      "forms": "Strict left-alignment for labels and inputs. Stacked layout for better scanability."
+    }
+  },
+  "surfaces_and_components": {
+    "surface_strategy": "Grid Borders (The 'Technical' Look). Avoid floating soft-shadow cards. Use strict, flat borders to expose the skeleton of the UI.",
+    "borders_and_radius": "Almost brutalist. Use `rounded-sm` (4px) maximum for inputs and buttons. Widgets should have sharp 1px solid borders (`border-border`). No soft shadows.",
+    "shadcn_customizations": {
+      "Button": "Remove default shadow. Use `rounded-sm`. Hover states must be solid color shifts, no opacity fades.",
+      "Input": "Use `rounded-sm`. Focus state MUST use `focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2`.",
+      "Card": "Strip away all drop shadows (`shadow-none`). Keep only `border border-border`. Background pure white.",
+      "Table": "Use `border-b` for rows. Hover states for rows should use `hover:bg-muted/50`. Table header must use the 'labels' typography scale (uppercase, tracking).",
+      "Badge": "Use square or slightly rounded badges. High contrast text.",
+      "Tabs": "Override default Shadcn background. Use a minimal bottom-border style for tab triggers rather than encapsulated pills to look more enterprise."
+    },
+    "icons": {
+      "library": "@phosphor-icons/react",
+      "style": "Use regular or bold weights for high legibility in dense tables. Do not use duotone for admin portals.",
+      "install_command": "yarn add @phosphor-icons/react"
+    }
+  },
+  "navigation_and_header": {
+    "style": "Solid background with a hard bottom border (`border-b border-border`). Background pure white.",
+    "layout": "Left: MPS Auth text logo (Chivo Black, text-xl). Center/Left: Main Navigation Links. Right: Admin Profile & Logout CTA.",
+    "links": "Must be visible on desktop (no hamburger menu unless on mobile viewport). Active states should have a bold font-weight and a primary-colored bottom border indicator."
+  },
+  "motion_and_interactions": {
+    "philosophy": "Minimalist — use micro-interactions only for immediate feedback.",
+    "transitions": "Fast and snappy. `duration-150 ease-out`.",
+    "feedback": "Use Sonner for toast notifications on all CRUD actions (User created, App assigned, Token revoked)."
+  },
+  "accessibility_and_testing": {
+    "contrast": "Strict WCAG AA minimum. All text over backgrounds must exceed 4.5:1 ratio.",
+    "focus": "Visible focus rings are MANDATORY for all inputs, buttons, and links.",
+    "testing_attributes": "CRITICAL: Every interactive element MUST have a `data-testid` attribute in kebab-case. Examples: `data-testid=\"login-email-input\"`, `data-testid=\"submit-login-button\"`, `data-testid=\"create-user-modal-trigger\"`, `data-testid=\"revoke-session-button\"`."
+  },
+  "page_specific_instructions": {
+    "auth_login": "Two-column layout on desktop. Left side: High-contrast login form centered in a generous container. Right side: Edge-to-edge abstract architectural image (from image_urls) covered with a subtle `bg-black/10` overlay to add depth without obscuring. Use `data-testid` for email, password, and submit.",
+    "auth_onboarding": "Wizard flow. Step-by-step centered card layout (`max-w-2xl`). Progress indicator at the top. Use clean transition animations between steps.",
+    "auth_dashboard": "The 'Control Room'. Top row: 3-4 Key Metric cards (Total Users, Active Sessions, Apps, System Health). Below: A split view—Left (col-span-8): Recent Audit Log table. Right (col-span-4): Quick Actions or System Alerts.",
+    "auth_users": "Dense data table. Left aligned. Search bar and filter dropdowns (Role, App) explicitly visible above the table. Action menu (three dots) on the far right of each row for Edit/Deactivate.",
+    "auth_audit": "Pure technical view. Full-width table. Use `IBM Plex Mono` for timestamps, IP addresses, and User IDs. Distinct badge colors for Actions (e.g., green for Login, red for Failed Login, blue for Permission Change)."
+  },
+  "image_urls": {
+    "login_hero": {
+      "url": "https://images.pexels.com/photos/3137083/pexels-photo-3137083.jpeg",
+      "description": "Monochrome abstract architectural structure with triangular geometric patterns. Perfect for the right side of the split login screen, projecting structure, system, and enterprise scale.",
+      "placement_instructions": "Use as `object-cover h-full w-full` on the right half of the `/auth/login` page on desktop breakpoints. Add a very light overlay if needed for contrast."
+    },
+    "onboarding_background": {
+      "url": "https://images.pexels.com/photos/7406300/pexels-photo-7406300.jpeg",
+      "description": "Low angle shot of a modern university building facade. Connects the software to the physical 'school' context professionally.",
+      "placement_instructions": "Use as a subtle blurred background or side panel during the first-time admin setup wizard."
+    },
+    "system_health_illustration": {
+      "url": "https://images.pexels.com/photos/5203849/pexels-photo-5203849.jpeg",
+      "description": "Detailed view of network server racks in a modern data center.",
+      "placement_instructions": "Can be used as an avatar, empty state illustration, or banner in the Apps/System management sections."
+    }
+  }
+}
