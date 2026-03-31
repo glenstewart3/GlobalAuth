@@ -1,0 +1,39 @@
+{
+  "summary": "Full e2e testing of MPS Auth backend (14 pytest tests) and frontend (all 6 pages) — all core flows working",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "GET /", "issue": "Root path at external URL returns React HTML (not backend JSON). Backend root only accessible internally at localhost:8001/. This is expected K8s routing behavior — document it clearly."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Dashboard", "issue": "Stat cards and recent-audit-table show skeleton loading state briefly on initial load — data populates after. Not a bug, just a timing observation.", "selector": "[data-testid='stat-card-total-users']", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_mps_auth.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "CORS: CORS_ORIGINS='*' with allow_credentials=True will cause browsers to reject credentialed requests. Browsers require explicit origin (not wildcard) when credentials are sent. Fix: set CORS_ORIGINS to the actual frontend domain.",
+    "Users list API returns paginated response with 'items' key (not 'users') — document consistently in API response schema",
+    "User email is silently lowercased on creation — should be documented or communicated in API response"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_mps_auth.py"
+  ],
+  "success_rate": {
+    "backend": "100% (14/14 tests passing)",
+    "frontend": "100% (all pages load, all data-testid elements found)"
+  },
+  "test_credentials": "admin@mps.edu.au / Admin1234!",
+  "seed_data_creation": "Created test users (test_user_<timestamp>@mps.edu.au) and students (TEST<timestamp>) via API during tests",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "All backend APIs working. Frontend pages: /auth/login, /auth/dashboard, /auth/users, /auth/students, /auth/apps, /auth/audit all functional. Key CORS issue: CORS_ORIGINS=* will break credentialed requests from browsers — needs to be set to explicit frontend domain.",
+  "rca_of_issues": "CORS wildcard with credentials: FastAPI CORSMiddleware with allow_origins=['*'] and allow_credentials=True is rejected by browsers per CORS spec. The backend .env has CORS_ORIGINS='*' which is split into ['*']. Browser requests with cookies will fail in production. Fix: set CORS_ORIGINS=https://user-gateway-66.preview.emergentagent.com (or the production domain)."
+}

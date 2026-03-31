@@ -1,34 +1,26 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* MPS Auth global styles */
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+/* Fade-in animation for page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 150ms ease-out, transform 150ms ease-out;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-}
-
-.App-link {
-    color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
+/* Badge action colours */
+.badge-login { @apply bg-green-50 text-green-700 border-green-200; }
+.badge-logout { @apply bg-slate-100 text-slate-600 border-slate-200; }
+.badge-failed-login { @apply bg-red-50 text-red-700 border-red-200; }
+.badge-permission-change { @apply bg-blue-50 text-blue-700 border-blue-200; }
+.badge-user-created { @apply bg-purple-50 text-purple-700 border-purple-200; }
+.badge-user-deactivated { @apply bg-orange-50 text-orange-700 border-orange-200; }
+.badge-default { @apply bg-gray-50 text-gray-600 border-gray-200; }
