@@ -13,6 +13,12 @@ import { Toaster } from "./components/ui/sonner";
 import "./App.css";
 
 function App() {
+  // Redirect to /auth/login if the user lands on a non-auth path (e.g. root /)
+  if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth")) {
+    window.location.replace("/auth/login");
+    return null;
+  }
+
   return (
     <BrowserRouter basename="/auth">
       <AuthProvider>
