@@ -24,9 +24,13 @@ export default function Onboarding() {
     axios
       .get(`${API_BASE}/onboarding/status`)
       .then((res) => {
+        // Only redirect if system already has users
         if (!res.data.needs_onboarding) navigate("/login", { replace: true });
       })
-      .catch(() => navigate("/login", { replace: true }));
+      .catch(() => {
+        // API unreachable — stay on page so admin can still submit the form
+        // (backend may respond once they submit)
+      });
   }, [navigate]);
 
   const validate = () => {

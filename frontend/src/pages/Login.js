@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth, API_BASE } from "../contexts/AuthContext";
 import { toast } from "sonner";
-import { Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, Settings } from "lucide-react";
 import axios from "axios";
 
 export default function Login() {
@@ -11,6 +11,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const { user, loading, login } = useAuth();
   const navigate = useNavigate();
 
@@ -20,12 +21,21 @@ export default function Login() {
       navigate("/dashboard", { replace: true });
       return;
     }
+    // Check if first-time setup is needed
     axios
       .get(`${API_BASE}/onboarding/status`)
       .then((res) => {
-        if (res.data.needs_onboarding) navigate("/onboarding", { replace: true });
+        if (res.data.needs_onboarding) {
+          // Auto-redirect if no users at all
+          navigate("/onboarding", { replace: true });
+        } else {
+          setNeedsOnboarding(false);
+        }
       })
-      .catch(() => {});
+      .catch(() => {
+        // API unreachable — surface the setup link manually
+        setNeedsOnboarding(true);
+      });
   }, [loading, user, navigate]);
 
   const handleSubmit = async (e) => {
@@ -134,6 +144,21 @@ export default function Login() {
               {submitting ? "Signing in…" : "Sign in"}
             </button>
           </form>
+
+          {/* First-time setup link — always visible so admins are never stuck */}
+          <div className="mt-8 pt-6 border-t border-border" data-testid="first-time-setup-section">
+            <p className="text-xs text-muted-foreground mb-2">
+              Setting up MPS Auth for the first time?
+            </p>
+            <Link
+              to="/onboarding"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline transition-colors"
+              data-testid="first-time-setup-link"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              Create the first admin account
+            </Link>
+          </div>
         </div>
       </div>
 
