@@ -172,36 +172,43 @@ async def get_me(current_user: User = Depends(get_current_user)):
     }
 
 
-@router.post("/google/callback/", response_model=TokenResponse)
-async def google_callback(
+@router.post("/google/login/", response_model=TokenResponse)
+async def google_login(
     request: Request,
     response: Response,
     db: AsyncSession = Depends(get_db),
 ):
-    """Exchange an Emergent Auth session_id for an MPS Auth JWT.
-    The Google email must match an existing active user account."""
-    import httpx
+    """Verify a Google ID token and issue an MPS Auth JWT.
+    The Google account email must match an existing active user."""
+    import asyncio
+    from google.oauth2 import id_token as google_id_token
+    from google.auth.transport import requests as google_requests
+
+    client_id = os.environ.get("GOOGLE_CLIENT_ID", "")
+    if not client_id:
+        raise HTTPException(status_code=500, detail="Google OAuth is not configured on this server")
 
     body = await request.json()
-    session_id = body.get("session_id")
-    if not session_id:
-        raise HTTPException(status_code=400, detail="session_id is required")
+    credential = body.get("credential")
+    if not credential:
+        raise HTTPException(status_code=400, detail="Google credential is required")
 
-    # Fetch identity from Emergent Auth
-    async with httpx.AsyncClient() as client:
-        res = await client.get(
-            "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
-            headers={"X-Session-ID": session_id},
-            timeout=10,
+    # Verify the ID token against Google's public keys
+    try:
+        idinfo = await asyncio.to_thread(
+            google_id_token.verify_oauth2_token,
+            credential,
+            google_requests.Request(),
+            client_id,
         )
+    except ValueError as exc:
+        raise HTTPException(status_code=401, detail=f"Invalid Google token: {exc}")
 
-    if res.status_code != 200:
-        raise HTTPException(status_code=401, detail="Invalid or expired Google session")
-
-    google_data = res.json()
-    email = google_data.get("email", "").lower()
+    email = idinfo.get("email", "").lower()
     if not email:
         raise HTTPException(status_code=400, detail="No email returned from Google")
+    if not idinfo.get("email_verified"):
+        raise HTTPException(status_code=401, detail="Google account email is not verified")
 
     # Must match an existing, active MPS Auth account
     result = await db.execute(
