@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 DEFAULT_APPS = [
     {"name": "WellTrack", "slug": "welltrack", "description": "Student wellbeing tracking platform"},
     {"name": "BeeShopKiosk", "slug": "beeshopkiosk", "description": "School shop kiosk system"},
-    {"name": "PsychScheduler", "slug": "psychscheduler", "description": "Psychology appointment scheduling"},
 ]
 
 
