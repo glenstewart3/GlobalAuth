@@ -57,32 +57,29 @@ deactivate
 
 ### 3b. Create the backend `.env` file
 
+First set up the PostgreSQL database (see Section 8), then:
+
 ```bash
+cp /var/www/auth/backend/.env.example /var/www/auth/backend/.env
 nano /var/www/auth/backend/.env
 ```
 
-Paste and fill in your values:
+Fill in your values — the file will look like this:
 
 ```
-MONGO_URL="mongodb://localhost:27017"
-DB_NAME="test_database"
-CORS_ORIGINS="https://apps.mps.edu.vic.gov.au"
-DATABASE_URL="sqlite+aiosqlite:////var/www/auth/backend/mps_auth.db"
-JWT_SECRET="replace-this-with-a-random-64-char-hex-string"
+DATABASE_URL="postgresql://mpsauth:yourpassword@localhost:5432/mpsauth"
+JWT_SECRET="replace-with-64-char-random-hex"
 COOKIE_SECURE="true"
 API_PREFIX="/auth/api"
+CORS_ORIGINS="https://apps.mps.edu.vic.gov.au"
+MONGO_URL="mongodb://localhost:27017"
+DB_NAME="test_database"
 ```
 
 Generate a secure JWT secret:
 ```bash
 python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
-
-> **PostgreSQL instead of SQLite** (recommended for production):
-> ```
-> DATABASE_URL="postgresql://mpsauth:yourpassword@localhost:5432/mpsauth"
-> ```
-> See Section 8 for PostgreSQL setup.
 
 ---
 
@@ -255,7 +252,7 @@ Click **"Create the first admin account"**, fill in your name, email and passwor
 
 ---
 
-## 8. PostgreSQL setup (recommended)
+## 8. PostgreSQL setup (do this before filling in the .env)
 
 ```bash
 sudo -u postgres psql
@@ -267,14 +264,14 @@ CREATE DATABASE mpsauth OWNER mpsauth;
 \q
 ```
 
-Update `/var/www/auth/backend/.env`:
-```
-DATABASE_URL="postgresql://mpsauth:yourpassword@localhost:5432/mpsauth"
+Test the connection:
+```bash
+psql -U mpsauth -d mpsauth -h localhost -c "\conninfo"
 ```
 
-Restart the backend to apply:
-```bash
-pm2 restart mps-auth-backend
+Then use this as your `DATABASE_URL` in `/var/www/auth/backend/.env`:
+```
+DATABASE_URL="postgresql://mpsauth:yourpassword@localhost:5432/mpsauth"
 ```
 
 ---
