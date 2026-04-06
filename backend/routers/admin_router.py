@@ -358,3 +358,28 @@ async def update_app(
     await db.commit()
     await db.refresh(app)
     return app_to_dict(app)
+
+
+@router.delete("/apps/{app_id}", status_code=204)
+async def delete_app(
+    app_id: str,
+    request: Request,
+    current_user: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    ip = get_client_ip(request)
+    app = (await db.execute(select(App).where(App.id == app_id))).scalar_one_or_none()
+    if not app:
+        raise HTTPException(status_code=404, detail="App not found")
+
+    name = app.name
+    await db.delete(app)
+    db.add(AuditLog(
+        user_id=str(current_user.id),
+        user_email=current_user.email,
+        action="APP_DELETED",
+        description=f"Deleted app: {name}",
+        ip_address=ip,
+    ))
+    await db.commit()
+

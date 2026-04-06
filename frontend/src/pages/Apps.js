@@ -70,6 +70,17 @@ export default function Apps() {
     }
   };
 
+  const handleDelete = async (app) => {
+    if (!window.confirm(`Permanently delete "${app.name}"? This cannot be undone.`)) return;
+    try {
+      await request("DELETE", `/apps/${app.id}`);
+      toast.success(`${app.name} deleted`);
+      fetchApps();
+    } catch {
+      toast.error("Failed to delete app");
+    }
+  };
+
   const inputClass = "w-full h-9 px-3 rounded-sm border border-input text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
   const labelClass = "block text-xs uppercase tracking-[0.05em] font-semibold text-muted-foreground mb-1.5";
 
@@ -132,6 +143,13 @@ export default function Apps() {
                       className={app.is_active ? "text-orange-600" : "text-green-700"}
                     >
                       {app.is_active ? "Deactivate" : "Activate"}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleDelete(app)}
+                      className="text-destructive"
+                      data-testid={`delete-app-${app.slug}`}
+                    >
+                      Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
