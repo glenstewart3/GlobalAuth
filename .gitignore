@@ -80,34 +80,7 @@ memory/test_credentials.md
 
 # Mobile development
 android-sdk/-e 
-# Environment files
+# Environment files — real secrets are never committed
 *.env
 *.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+!*.env.example

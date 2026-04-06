@@ -60,7 +60,7 @@ deactivate
 First set up the PostgreSQL database (see Section 8), then:
 
 ```bash
-cp /var/www/auth/backend/.env.example /var/www/auth/backend/.env
+cp /var/www/auth/backend/env.example /var/www/auth/backend/.env
 nano /var/www/auth/backend/.env
 ```
 
