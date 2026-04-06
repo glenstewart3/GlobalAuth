@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth, API_BASE } from "../contexts/AuthContext";
-import { toast } from "sonner";
-import { Eye, EyeOff, ShieldCheck, Settings } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck } from "lucide-react";
 import axios from "axios";
+import { toast } from "sonner";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -11,30 +11,35 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [needsOnboarding, setNeedsOnboarding] = useState(false);
+
+  // "checking" covers both the auth refresh AND the onboarding status call.
+  // The login form is only shown once we know for certain that onboarding is done.
+  const [checking, setChecking] = useState(true);
+
   const { user, loading, login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loading) return;
+    if (loading) return; // AuthContext still restoring session — wait
+
     if (user) {
       navigate("/dashboard", { replace: true });
       return;
     }
-    // Check if first-time setup is needed
+
+    // Session not found. Check whether first-time setup has been done.
     axios
       .get(`${API_BASE}/onboarding/status`)
       .then((res) => {
         if (res.data.needs_onboarding) {
-          // Auto-redirect if no users at all
           navigate("/onboarding", { replace: true });
         } else {
-          setNeedsOnboarding(false);
+          setChecking(false); // onboarding done — show the login form
         }
       })
       .catch(() => {
-        // API unreachable — surface the setup link manually
-        setNeedsOnboarding(true);
+        // API unreachable — show login form and let the user try
+        setChecking(false);
       });
   }, [loading, user, navigate]);
 
@@ -48,22 +53,26 @@ export default function Login() {
       navigate("/dashboard", { replace: true });
     } catch (err) {
       const detail = err.response?.data?.detail;
-      const msg =
+      setError(
         typeof detail === "string"
           ? detail
           : Array.isArray(detail)
           ? detail.map((d) => d.msg || d).join(", ")
-          : "Invalid credentials";
-      setError(msg);
+          : "Invalid email or password"
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) {
+  // Full-screen spinner while we decide what to show
+  if (loading || checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm text-muted-foreground">Loading…</span>
+        </div>
       </div>
     );
   }
@@ -144,21 +153,6 @@ export default function Login() {
               {submitting ? "Signing in…" : "Sign in"}
             </button>
           </form>
-
-          {/* First-time setup link — always visible so admins are never stuck */}
-          <div className="mt-8 pt-6 border-t border-border" data-testid="first-time-setup-section">
-            <p className="text-xs text-muted-foreground mb-2">
-              Setting up MPS Auth for the first time?
-            </p>
-            <Link
-              to="/onboarding"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline transition-colors"
-              data-testid="first-time-setup-link"
-            >
-              <Settings className="h-3.5 w-3.5" />
-              Create the first admin account
-            </Link>
-          </div>
         </div>
       </div>
 
