@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useApi } from "../hooks/useApi";
 import { toast } from "sonner";
-import { Users, GraduationCap, AppWindow, Activity } from "lucide-react";
+import { Users, AppWindow, Activity } from "lucide-react";
 
 const ACTION_COLORS = {
   LOGIN: "badge-login",
@@ -36,22 +36,20 @@ function StatCard({ label, value, icon: Icon, loading }) {
 
 export default function Dashboard() {
   const { request } = useApi();
-  const [stats, setStats] = useState({ users: 0, students: 0, apps: 0 });
+  const [stats, setStats] = useState({ users: 0, apps: 0 });
   const [auditLogs, setAuditLogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [usersRes, studentsRes, appsRes, auditRes] = await Promise.all([
+        const [usersRes, appsRes, auditRes] = await Promise.all([
           request("GET", "/users/", null, { limit: 1 }),
-          request("GET", "/students/", null, { limit: 1 }),
           request("GET", "/apps/"),
           request("GET", "/audit/", null, { limit: 10 }),
         ]);
         setStats({
           users: usersRes.data.total,
-          students: studentsRes.data.total,
           apps: appsRes.data.length,
         });
         setAuditLogs(auditRes.data.items);
@@ -72,9 +70,8 @@ export default function Dashboard() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <StatCard label="Total Users" value={stats.users} icon={Users} loading={loading} />
-        <StatCard label="Total Students" value={stats.students} icon={GraduationCap} loading={loading} />
         <StatCard label="Registered Apps" value={stats.apps} icon={AppWindow} loading={loading} />
       </div>
 

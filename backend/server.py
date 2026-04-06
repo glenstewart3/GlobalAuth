@@ -12,7 +12,6 @@ import models  # noqa: F401
 from database import init_db, AsyncSessionLocal
 from routers.auth_router import router as auth_router
 from routers.admin_router import router as admin_router
-from routers.students_router import router as students_router
 from routers.onboarding_router import router as onboarding_router
 from routers.audit_router import router as audit_router
 
@@ -71,7 +70,6 @@ logger.info(f"API prefix: {API_PREFIX}")
 
 app.include_router(auth_router, prefix=API_PREFIX)
 app.include_router(admin_router, prefix=API_PREFIX)
-app.include_router(students_router, prefix=API_PREFIX)
 app.include_router(onboarding_router, prefix=API_PREFIX)
 app.include_router(audit_router, prefix=API_PREFIX)
 

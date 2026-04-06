@@ -6,7 +6,6 @@ import Login from "./pages/Login";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
-import Students from "./pages/Students";
 import AuditLog from "./pages/AuditLog";
 import Apps from "./pages/Apps";
 import { Toaster } from "./components/ui/sonner";
@@ -36,7 +35,6 @@ function App() {
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<Users />} />
-            <Route path="students" element={<Students />} />
             <Route path="audit" element={<AuditLog />} />
             <Route path="apps" element={<Apps />} />
           </Route>

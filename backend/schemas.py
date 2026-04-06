@@ -54,23 +54,6 @@ class PermissionCreate(BaseModel):
     role: str
 
 
-class StudentCreate(BaseModel):
-    student_id: str
-    first_name: str
-    last_name: str
-    year_level: str
-    class_group: str
-    is_active: bool = True
-
-
-class StudentUpdate(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    year_level: Optional[str] = None
-    class_group: Optional[str] = None
-    is_active: Optional[bool] = None
-
-
 class OnboardingSetup(BaseModel):
     email: EmailStr
     password: str

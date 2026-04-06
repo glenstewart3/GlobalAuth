@@ -4,18 +4,15 @@ import { toast } from "sonner";
 import {
   LayoutDashboard,
   Users,
-  GraduationCap,
   ScrollText,
   AppWindow,
   ShieldCheck,
   LogOut,
-  ChevronRight,
 } from "lucide-react";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/users", label: "Users", icon: Users },
-  { to: "/students", label: "Students", icon: GraduationCap },
   { to: "/apps", label: "Apps", icon: AppWindow },
   { to: "/audit", label: "Audit Log", icon: ScrollText },
 ];

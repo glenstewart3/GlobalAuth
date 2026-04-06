@@ -54,17 +54,3 @@ class AuditLog(Base):
     description = Column(Text, nullable=True)
     ip_address = Column(String(45), nullable=True)
     timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True)
-
-
-class Student(Base):
-    __tablename__ = "students"
-
-    id = Column(String(36), primary_key=True, default=gen_uuid)
-    student_id = Column(String(50), unique=True, nullable=False, index=True)
-    first_name = Column(String(100), nullable=False)
-    last_name = Column(String(100), nullable=False)
-    year_level = Column(String(20), nullable=False)
-    class_group = Column(String(50), nullable=False)
-    is_active = Column(Boolean, default=True, nullable=False)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
