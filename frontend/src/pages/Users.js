@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 
-const ROLES = ["student", "teacher", "admin"];
+const ROLES = ["admin", "non-admin"];
 
 export default function Users() {
   const { request } = useApi();
@@ -35,7 +35,7 @@ export default function Users() {
   const [showPerms, setShowPerms] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [perms, setPerms] = useState([]);
-  const [permForm, setPermForm] = useState({ app_id: "", role: "student" });
+  const [permForm, setPermForm] = useState({ app_id: "", role: "non-admin" });
   const [permLoading, setPermLoading] = useState(false);
 
   const fetchUsers = useCallback(async () => {
