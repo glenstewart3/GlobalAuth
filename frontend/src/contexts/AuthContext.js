@@ -32,6 +32,12 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    // CRITICAL: If returning from Google OAuth, skip the token refresh.
+    // AuthCallback will exchange the session_id and establish the session first.
+    if (window.location.hash?.includes("session_id=")) {
+      setLoading(false);
+      return;
+    }
     refreshAuth();
   }, [refreshAuth]);
 
@@ -43,7 +49,7 @@ export function AuthProvider({ children }) {
       headers: { Authorization: `Bearer ${token}` },
     });
     setUser(verifyRes.data.user);
-    return verifyRes.data;
+    return { ...verifyRes.data, access_token: token };
   };
 
   const logout = async () => {

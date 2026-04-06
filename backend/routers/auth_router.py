@@ -170,3 +170,71 @@ async def get_me(current_user: User = Depends(get_current_user)):
         "is_active": current_user.is_active,
         "is_admin": current_user.is_admin,
     }
+
+
+@router.post("/google/callback/", response_model=TokenResponse)
+async def google_callback(
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+):
+    """Exchange an Emergent Auth session_id for an MPS Auth JWT.
+    The Google email must match an existing active user account."""
+    import httpx
+
+    body = await request.json()
+    session_id = body.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=400, detail="session_id is required")
+
+    # Fetch identity from Emergent Auth
+    async with httpx.AsyncClient() as client:
+        res = await client.get(
+            "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+            headers={"X-Session-ID": session_id},
+            timeout=10,
+        )
+
+    if res.status_code != 200:
+        raise HTTPException(status_code=401, detail="Invalid or expired Google session")
+
+    google_data = res.json()
+    email = google_data.get("email", "").lower()
+    if not email:
+        raise HTTPException(status_code=400, detail="No email returned from Google")
+
+    # Must match an existing, active MPS Auth account
+    result = await db.execute(
+        select(User).where(User.email == email, User.is_active == True)
+    )
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(
+            status_code=403,
+            detail="No MPS Auth account found for this Google account. Contact your administrator.",
+        )
+
+    ip = get_client_ip(request)
+    access_token = create_access_token(str(user.id), user.email, user.is_admin)
+    refresh_token = create_refresh_token(str(user.id))
+
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=COOKIE_SECURE,
+        samesite="lax",
+        max_age=REFRESH_TOKEN_EXPIRE_HOURS * 3600,
+        path="/",
+    )
+
+    db.add(AuditLog(
+        user_id=str(user.id),
+        user_email=user.email,
+        action="LOGIN",
+        description="Login via Google OAuth",
+        ip_address=ip,
+    ))
+    await db.commit()
+
+    return {"access_token": access_token, "token_type": "bearer"}
